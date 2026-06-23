@@ -1,4 +1,3 @@
-
 set.seed(1)
 n <- 50
 x1 <- rnorm(n, mean = 5, sd = 2)
