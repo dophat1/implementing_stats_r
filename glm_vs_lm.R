@@ -39,3 +39,10 @@ result_bfgs <- optim(start, negloglik, method = "BFGS", control = list(maxit = 5
 result_bfgs$par
 result_bfgs$convergence
 
+ols <- function(X,y){
+  solve(t(X) %*% X) %*% t(X)%*%y
+}
+
+var_matrix <- function(X, sigma2){
+  sigma2 * solve(t(X) %*% X)
+}
