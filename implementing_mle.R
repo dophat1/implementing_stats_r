@@ -22,3 +22,32 @@ loglik(beta_hat, sigma2_hat, y, X)
 
 loglik(c(0, 0), sigma2_hat, y, X)
 
+# score function
+score <- function(beta, sigma2, y, X) {
+  n <- length(y)
+  resid <- y - X %*% beta
+  score_beta <- 1/sigma2 * t(X) %*% resid          # length-2 vector, using X, resid, sigma2
+  score_sigma2 <- -n/(2*sigma2) + 1/(2*sigma2**2) * sum(resid^2)       # single number, using n, sigma2, resid
+  c(score_beta, score_sigma2)   # combine into one vector
+}
+
+score(beta_hat, sigma2_hat, y, X)
+
+# hessian matrix
+
+hessian <- function(beta, sigma2, y, X) {
+  n <- length(y)
+  resid <- y - X %*% beta
+  
+  H_bb <- 1/sigma2 * t(X) %*% X              # 2x2
+  H_bs <- 1/sigma2**2 * t(X) %*% resid             # 2x1
+  H_ss <- -n/(2*sigma2**2) + 1/(sigma2^3) *sum(resid^2)          # 1x1 (scalar)
+  
+  top <- cbind(H_bb, H_bs)         # glue 2x2 and 2x1 side by side -> 2x3
+  bottom <- cbind(t(H_bs), H_ss)   # glue 1x2 and 1x1 side by side -> 1x3
+  rbind(top, bottom)               # stack -> 3x3
+}
+
+H <- hessian(beta_hat, sigma2_hat, y, X)
+H
+eigen(H)$values
